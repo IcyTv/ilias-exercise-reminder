@@ -18,6 +18,14 @@ const db = new JsonDB(
 	new Config("db", true, process.env.NODE_ENV !== "production", "/")
 );
 
+db.load();
+
+if (db.exists("/userMap")) {
+	db.delete("/userMap");
+}
+
+db.push("/userMap", {});
+
 export default db;
 
 // const db = low(new FileAdapter<DB>("db.json"));

@@ -15,3 +15,8 @@ form > div {
 .red {
 	color: red;
 }
+
+span.code {
+	background-color: lightgrey;
+	padding: 2px;
+}
