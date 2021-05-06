@@ -1,0 +1,17 @@
+form {
+	display: flex;
+	flex-direction: column;
+}
+
+form > * {
+	margin: 1em;
+}
+
+form > div {
+	display: flex;
+	flex-direction: column;
+}
+
+.red {
+	color: red;
+}
