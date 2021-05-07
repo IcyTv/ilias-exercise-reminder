@@ -6,7 +6,10 @@ on:
 
 jobs:
     build:
-        runs-on: [ubuntu-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, windows-latest]
         steps:
             - name: Get the tag version
               id: get_version
@@ -43,10 +46,10 @@ jobs:
               uses: actions/upload-artifact@v2
               with:
                   name: ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}
-                  path: dist/ilias-exercise-reminder*
+                  path: dist/app*
             - name: Attach executable to release
               uses: skx/github-action-publish-binaries@master
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  args: dist/
+                  args: dist/app*
