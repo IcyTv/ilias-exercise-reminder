@@ -26,6 +26,9 @@ module.exports = {
 			{
 				test: /\.node$/,
 				loader: "node-loader",
+				options: {
+					name: "native.node",
+				},
 			},
 		],
 	},
@@ -35,5 +38,16 @@ module.exports = {
 
 	output: {
 		path: path.resolve(__dirname, "dist"),
+	},
+
+	optimization: {
+		usedExports: true,
+		moduleIds: "deterministic",
+		nodeEnv: "production",
+		mangleWasmImports: true,
+		providedExports: true,
+		concatenateModules: true,
+		mangleExports: "deterministic",
+		innerGraph: true,
 	},
 };

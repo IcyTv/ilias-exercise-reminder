@@ -13,3 +13,4 @@ yarn-error.log
 .env
 dist/
 .pnp.js
+tmp/

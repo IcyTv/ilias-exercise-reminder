@@ -41,18 +41,18 @@ jobs:
             - name: Install dependencies
               run: yarn --immutable
             - name: Build executable
-              run: yarn build
+              run: yarn build --target node14-${{ os.runner }}-x64
               env:
                   VERSION: ${{ steps.get_version.outputs.VERSION }}
             - name: Upload executable as artifact
               uses: actions/upload-artifact@v2
               with:
                   name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
-                  path: dist/ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
+                  path: dist/ilias-exercise-reminder-${{ runner.os }}*
             - name: Attach executable to release
               uses: svenstaro/upload-release-action@2.2.1
               with:
                   repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  file: dist/ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
+                  file: dist/ilias-exercise-reminder-${{ runner.os }}*
                   asset_name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
                   tag: ${{ github.ref }}
