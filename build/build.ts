@@ -16,13 +16,17 @@ const build = async () => {
 		"for",
 		process.platform,
 		"with ending",
-		ending
+		ending,
+		"\n\nFilename will be: ",
+		`dist/ilias-exercise-reminder-${
+			process.env.VERSION || "undefined"
+		}${ending}`
 	);
 
 	await caxa({
 		directory: "dist",
 		command: ["{{caxa}}/node_modules/.bin/node", "dist/cli.js"],
-		output: `ilias-exercise-reminder-${
+		output: `dist/ilias-exercise-reminder-${
 			process.env.VERSION || "undefined"
 		}${ending}`,
 	});
