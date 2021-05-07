@@ -52,12 +52,12 @@ jobs:
               uses: actions/upload-artifact@v2
               with:
                   name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
-                  path: dist/ilias-exercise-reminder-${{ steps.os_name.outputs.lowercase }}*
+                  path: dist/ilias-exercise-reminder*
             - name: Attach executable to release
               uses: svenstaro/upload-release-action@2.2.1
               with:
                   repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  file: dist/ilias-exercise-reminder-${{ steps.os_name.outputs.lowercase }}*
+                  file: dist/ilias-exercise-reminder*
                   asset_name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
                   tag: ${{ github.ref }}
                   file_glob: true

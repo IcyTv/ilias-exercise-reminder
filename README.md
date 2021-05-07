@@ -2,6 +2,8 @@
 
 This is a CLI tool to add google tasks for ILIAS Exercises
 
+[![Prebuild Binary Status](https://github.com/IcyTv/ilias-exercise-reminder/actions/workflows/generate-executables.yaml/badge.svg)](https://github.com/IcyTv/ilias-exercise-reminder/actions/workflows/generate-executables.yaml)
+
 ## Disclaimer
 
 At the moment, this is pretty much pure jank, if you find issues or have improvement suggestions
