@@ -10,6 +10,13 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest, windows-latest]
+                include:
+                    - os: ubuntu-latest
+                      artifact_name: ilias-exercise-reminder_linux
+                      artifact_ending:
+                    - os: windows-latest
+                      artifact_ending: .exe
+                      artifact_name: ilias-exercise-reminder_win
         steps:
             - name: Get the tag version
               id: get_version
@@ -30,26 +37,21 @@ jobs:
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
                   restore-keys: |
                       ${{ runner.os }}-yarn-
-            - name: Restore Cached nexe
-              uses: actions/cache@v2
-              id: nexe-cache
-              with:
-                  path: ~/.nexe
-                  key: ${{ runner.os }}-nexe-${{ hashFiles('**/yarn.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-nexe-
             - name: Install dependencies
               run: yarn --immutable
             - name: Build executable
               run: yarn build
+              env:
+                  VERSION: ${{ steps.get_version.outputs.VERSION }}
             - name: Upload executable as artifact
               uses: actions/upload-artifact@v2
               with:
-                  name: ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}
-                  path: dist/app*
+                  name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
+                  path: dist/ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
             - name: Attach executable to release
-              uses: skx/github-action-publish-binaries@master
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              uses: svenstaro/upload-release-action@2.2.1
               with:
-                  args: dist/app*
+                  repo_token: ${{ secrets.GITHUB_TOKEN }}
+                  file: dist/ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
+                  asset_name: ${{ matrix.artifact_name }}-${{steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
+                  tag: ${{ github.ref }}

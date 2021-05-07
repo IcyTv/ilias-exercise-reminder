@@ -10,10 +10,14 @@ const build = async () => {
 
 	console.log("Building application");
 
+	const ending = process.platform === "win32" ? ".exe" : "";
+
 	await caxa({
 		directory: "dist",
 		command: ["{{caxa}}/node_modules/.bin/node", "dist/cli.js"],
-		output: process.platform === "win32" ? "dist/app.exe" : "dist/app",
+		output: `ilias-exercise-reminder-${
+			process.env.VERSION || "undefined"
+		}${ending}`,
 	});
 
 	console.log("Done building! :)");
