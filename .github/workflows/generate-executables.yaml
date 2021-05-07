@@ -60,3 +60,4 @@ jobs:
                   file: dist/ilias-exercise-reminder-${{ steps.os_name.outputs.lowercase }}*
                   asset_name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
                   tag: ${{ github.ref }}
+                  file_glob: true
