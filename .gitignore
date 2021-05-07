@@ -1,7 +1,6 @@
 db.json
 
 .yarn/*
-!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
@@ -10,3 +9,5 @@ db.json
 
 node_modules
 yarn-error.log
+
+.env

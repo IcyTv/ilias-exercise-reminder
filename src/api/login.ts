@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import cheerio from "cheerio";
 import got, { OptionsOfTextResponseBody } from "got";
 import { CookieJar } from "tough-cookie";
@@ -47,6 +48,8 @@ export const login = async (
 		home_organization_selection: "Mit KIT-Account anmelden",
 	}).toString();
 
+	console.debug(chalk.green("Establishing connection"));
+
 	const sessionEstablishment = await got(
 		fullOpts.resource + "/Shibboleth.sso/Login" + fullOpts.query,
 		{
@@ -67,6 +70,8 @@ export const login = async (
 		);
 		throw new Error("Could not find csrf token!");
 	}
+
+	console.debug(chalk.green("Logging in"));
 
 	const loginData = jsonToFormData({
 		j_username: user,
@@ -103,6 +108,8 @@ export const login = async (
 			_eventId_proceed: "",
 		}).toString();
 
+		console.debug(chalk.green("Sending token to ", loginResponse.url));
+
 		loginResponse = await got(loginResponse.url, {
 			...gotConfig,
 			method: "POST",
@@ -118,6 +125,7 @@ export const login = async (
 		$2("h3.waypoint-triggered") &&
 		$2("h3.waypoint-triggered").text() === "Token-basierter Login"
 	) {
+		console.debug(chalk.red("Likely token needed!"));
 		tokenNeeded = true;
 	}
 
@@ -144,6 +152,8 @@ export const login = async (
 		SAMLResponse: saml.attr().value,
 		RelayState: relayState.attr().value,
 	}).toString();
+
+	console.debug(chalk.green("Confirming login"));
 
 	await got(fullOpts.resource + "/Shibboleth.sso/SAML2/POST", {
 		...gotConfig,
