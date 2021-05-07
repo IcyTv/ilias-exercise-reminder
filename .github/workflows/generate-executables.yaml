@@ -18,6 +18,10 @@ jobs:
                       artifact_ending: .exe
                       artifact_name: ilias-exercise-reminder_win
         steps:
+            - id: os_name
+              uses: ASzc/change-string-case-action@v1
+              with:
+                  string: ${{ runner.os }}
             - name: Get the tag version
               id: get_version
               shell: bash
@@ -41,18 +45,18 @@ jobs:
             - name: Install dependencies
               run: yarn --immutable
             - name: Build executable
-              run: yarn build --target node14-${{ runner.os }}-x64
+              run: yarn build --target node14-${{ steps.os_name.outputs.lowercase }}-x64
               env:
                   VERSION: ${{ steps.get_version.outputs.VERSION }}
             - name: Upload executable as artifact
               uses: actions/upload-artifact@v2
               with:
                   name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
-                  path: dist/ilias-exercise-reminder-${{ runner.os }}*
+                  path: dist/ilias-exercise-reminder-${{ steps.os_name.outputs.lowercase }}*
             - name: Attach executable to release
               uses: svenstaro/upload-release-action@2.2.1
               with:
                   repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  file: dist/ilias-exercise-reminder-${{ runner.os }}*
+                  file: dist/ilias-exercise-reminder-${{ steps.os_name.outputs.lowercase }}*
                   asset_name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
                   tag: ${{ github.ref }}
