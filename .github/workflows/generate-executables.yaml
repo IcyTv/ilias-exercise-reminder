@@ -1,0 +1,52 @@
+name: Generate Executables for Tag
+on:
+    release:
+        types:
+            - published
+
+jobs:
+    build:
+        runs-on: [ubuntu-latest, windows-latest]
+        steps:
+            - name: Get the tag version
+              id: get_version
+              run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+            - uses: actions/checkout@v2
+            - name: Use Node.js
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 14.15.3
+            - name: Get yarn cache directory path
+              id: yarn-cache-dir-path
+              run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+            - name: Restore Cached dependencies
+              uses: actions/cache@v2
+              id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+              with:
+                  path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
+            - name: Restore Cached nexe
+              uses: actions/cache@v2
+              id: nexe-cache
+              with:
+                  path: ~/.nexe
+                  key: ${{ runner.os }}-nexe-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-nexe-
+            - name: Install dependencies
+              run: yarn --immutable
+            - name: Build executable
+              run: yarn build
+            - name: Upload executable as artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}
+                  path: dist/ilias-exercise-reminder*
+            - name: Attach executable to release
+              uses: skx/github-action-publish-binaries@master
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  args: dist/

@@ -86,12 +86,18 @@ const getGoogleLogin = async () => {
 
 		const server = app.listen(5000);
 
-		console.log(
-			chalk.yellow("If it does not open automatically, go to " + url)
-		);
+		try {
+			open(url);
 
-		open(url);
-
+			console.log(
+				chalk.yellow("If it does not open automatically, go to " + url)
+			);
+		} catch (e) {
+			console.log(
+				chalk.red("Cannot open your browser,"),
+				chalk.yellow("please go to ", url)
+			);
+		}
 		await prom;
 		server.close();
 	} else {
@@ -279,4 +285,7 @@ const main = async () => {
 	);
 };
 
-main();
+main().catch((err) => {
+	console.error(chalk.red("Program exited with an error"));
+	console.error(err);
+});

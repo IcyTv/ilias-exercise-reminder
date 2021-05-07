@@ -11,3 +11,5 @@ node_modules
 yarn-error.log
 
 .env
+dist/
+.pnp.js
