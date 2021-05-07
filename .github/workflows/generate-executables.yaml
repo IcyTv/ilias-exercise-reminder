@@ -13,7 +13,7 @@ jobs:
                 include:
                     - os: ubuntu-latest
                       artifact_name: ilias-exercise-reminder_linux
-                      artifact_ending:
+                      artifact_ending: .elf
                     - os: windows-latest
                       artifact_ending: .exe
                       artifact_name: ilias-exercise-reminder_win
@@ -53,5 +53,5 @@ jobs:
               with:
                   repo_token: ${{ secrets.GITHUB_TOKEN }}
                   file: dist/ilias-exercise-reminder-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
-                  asset_name: ${{ matrix.artifact_name }}-${{steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
+                  asset_name: ${{ matrix.artifact_name }}-${{ steps.get_version.outputs.VERSION }}${{ matrix.artifact_ending }}
                   tag: ${{ github.ref }}

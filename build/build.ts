@@ -8,9 +8,16 @@ const build = async () => {
 		);
 	}
 
-	console.log("Building application");
+	const ending = process.platform === "win32" ? ".exe" : ".elf";
 
-	const ending = process.platform === "win32" ? ".exe" : "";
+	console.log(
+		"Building application, version",
+		process.env.VERSION || "undefined",
+		"for",
+		process.platform,
+		"with ending",
+		ending
+	);
 
 	await caxa({
 		directory: "dist",
