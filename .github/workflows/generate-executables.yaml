@@ -44,6 +44,11 @@ jobs:
                       ${{ runner.os }}-yarn-
             - name: Install dependencies
               run: yarn --immutable
+            - name: Secrets to dotenv
+              uses: TickX/var-to-dotenv@1.1.4
+              with:
+                key: GOOGLE_CLIENT_ID
+                value: ${{ secrets.GOOGLE_CLIENT_ID }}
             - name: Build executable
               run: yarn build --target node14-${{ steps.os_name.outputs.lowercase }}-x64
               env:
