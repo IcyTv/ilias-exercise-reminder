@@ -1,6 +1,8 @@
 const path = require("path");
 // const web = require("webpack");
 const nodeExternals = require("webpack-node-externals");
+const Dotenv = require("dotenv-webpack");
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 module.exports = {
 	mode: "production",
@@ -13,6 +15,10 @@ module.exports = {
 		__dirname: false,
 		__filename: false,
 	},
+	plugins: [
+		new Dotenv(),
+		new ProgressBarPlugin(),
+	],
 
 	module: {
 		rules: [

@@ -41,7 +41,7 @@ const getGoogleLogin = async () => {
 	console.log(chalk.green("Preparing Google OAuth"));
 	oauth2Client = new googleapis.Auth.OAuth2Client({
 		clientId: process.env.GOOGLE_CLIENT_ID,
-		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+		//clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 		redirectUri: "http://localhost:5000/callback",
 	});
 
