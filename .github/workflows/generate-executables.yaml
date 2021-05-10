@@ -45,7 +45,7 @@ jobs:
             - name: Install dependencies
               run: yarn --immutable
             - name: Secrets to dotenv
-              uses: TickX/var-to-dotenv@1.1.4
+              uses: TickX/var-to-dotenv@v1.1.1
               with:
                 key: GOOGLE_CLIENT_ID
                 value: ${{ secrets.GOOGLE_CLIENT_ID }}
