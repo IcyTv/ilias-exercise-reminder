@@ -21,16 +21,6 @@ program.version("0.0.1");
 program.requiredOption("-u --user <username>", "Username for ILIAS");
 program.option("--reset-password", "Allows reset of saved password");
 program.option("--reset-token", "Resets Google OAuth tokens");
-program.option(
-	"-f --force",
-	"Force addition of tasks, can result in duplicates",
-	false
-);
-program.option(
-	"--no-completed",
-	"Disable addition of completed exercises.\nATTENTION: This means that exercises where the date cannot be parsed cannot be added!",
-	false
-);
 
 program.parse();
 
@@ -184,12 +174,6 @@ const stringToColor = (string: string) => {
 	return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
 };
 
-const hashCode = (s: string) =>
-	s.split("").reduce((a, b) => {
-		a = (a << 5) - a + b.charCodeAt(0);
-		return a & a;
-	}, 0);
-
 const main = async () => {
 	await getGoogleLogin();
 	await createTaskListIfNotExists();
@@ -205,12 +189,6 @@ const main = async () => {
 			"ilias-exercise-reminder",
 			options.user,
 			password
-		);
-	} else {
-		console.log(
-			chalk.green(
-				"Got saved password for ILIAS, to reset use --reset-password"
-			)
 		);
 	}
 
@@ -243,7 +221,7 @@ const main = async () => {
 	const noNeedToAddIds: string[] = [];
 
 	existingTasks.data.items?.forEach((item) => {
-		noNeedToAdd.push((item.title || "").trim());
+		noNeedToAdd.push(item.title!);
 		noNeedToAddIds.push(item.id!);
 	});
 
@@ -254,60 +232,51 @@ const main = async () => {
 				course.exerciseDeadlines.map(async (deadline) => {
 					for (let a of deadline.deadlines) {
 						if (a.endTime) console.log(chalk.blue(a.endTime));
-						if (
-							options.noCompleted &&
-							(!a.endTime || moment(a.endTime).isBefore(moment()))
-						)
-							return;
+						// if (a.endTime === undefined) {
+						// 	console.warn(
+						// 		chalk.red(
+						// 			"No end time for",
+						// 			a.name,
+						// 			course.course
+						// 		)
+						// 	);
+						// 	return;
+						// }
+						// if (a.endTime && +a.endTime < +new Date()) {
+						// 	console.log(
+						// 		chalk.yellow("Expired deadline: ", a.endTime)
+						// 	);
+						// 	return;
+						// }
 						const taskTitle = `${course.course} - ${a.name}`;
-						if (noNeedToAdd.includes(taskTitle) && !options.force) {
-							// console.log(
-							// 	chalk.blueBright(
-							// 		`Task ${taskTitle} exists, skipping`
-							// 	)
-							// );
+						if (noNeedToAdd.includes(taskTitle)) {
+							console.log(
+								chalk.blueBright(
+									`Task ${taskTitle} exists, skipping`
+								)
+							);
 							return;
 						} else {
 							console.log(
 								chalk.green(`Adding ${taskTitle}`),
-								a.endTime
-									? chalk.yellow(
-											moment(a.endTime).toISOString()
-									  )
-									: chalk.red("done")
+								a.endTime ? chalk.yellow(moment(a.endTime).toISOString()): chalk.red("done")
 							);
 
-							try {
-								const res = await tasks.tasks.insert({
-									tasklist: tasklistId,
-									requestBody: {
-										title: taskTitle,
-										// id: hashCode(a.url || (Math.random() * 10e10).toString()).toString(16),
-										notes: `Section: ${deadline.mainName}\n\nURL: ${a.url}`,
-										due: a.endTime
-											? moment(a.endTime).toISOString()
-											: null,
-										status:
-											a.endTime &&
-											moment(a.endTime).isAfter(moment())
-												? null
-												: "completed",
-									},
-								});
-								console.log(
-									chalk.greenBright(taskTitle),
-									res.statusText === "OK"
-										? chalk.greenBright("OK")
-										: chalk.red(res.statusText)
-								);
-							} catch (err) {
-								console.error(
-									chalk.red(
-										`An error occured while adding ${taskTitle}\n`,
-										err
-									)
-								);
-							}
+							await tasks.tasks.insert({
+								tasklist: tasklistId,
+								requestBody: {
+									title: taskTitle,
+									notes: `Section: ${deadline.mainName}\n\nURL: ${a.url}`,
+									due: a.endTime
+										? moment(a.endTime).toISOString()
+										: null,
+									status:
+										a.endTime &&
+										moment(a.endTime).isAfter(moment())
+											? "needsAction"
+											: "completed",
+								},
+							});
 						}
 					}
 				})

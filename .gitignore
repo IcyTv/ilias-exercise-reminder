@@ -14,4 +14,3 @@ yarn-error.log
 dist/
 .pnp.js
 tmp/
-scripts/
