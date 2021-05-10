@@ -44,10 +44,11 @@ jobs:
                       ${{ runner.os }}-yarn-
             - name: Install dependencies
               run: yarn --immutable
-            - name: Create dotenv file
+            - name: Create dotenv file # I know I shouldn't bundle client secret, but that requires a rework
               run: |
                 touch .env
                 echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+                echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
             - name: Build executable
               run: yarn build --target node14-${{ steps.os_name.outputs.lowercase }}-x64
               env:
