@@ -7,6 +7,23 @@ import _ from "underscore";
 import moment from "moment";
 import "moment/locale/de";
 
+moment.updateLocale("de", {
+	monthsShort: [
+		"Jan",
+		"Feb",
+		"Mär",
+		"Apr",
+		"Mai",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Okt",
+		"Nov",
+		"Dez",
+	],
+});
+
 const keywords = ["Übungsblätter", "Übungen", "Aufgabenblätter"];
 
 const url =
@@ -190,8 +207,9 @@ export const getExerciseDeadlines = async (
 						if (property.text().includes("Start")) {
 							deadline.startTime = new Date(value.text()?.trim());
 						} else if (
-							property.text().includes("Abgabe") ||
-							property.text().includes("Bearbeitung")
+							(property.text().includes("Abgabe") ||
+								property.text().includes("Bearbeitung")) &&
+							!deadline.endTime
 						) {
 							console.log(chalk.blueBright("Got End date"));
 							if (value.text().includes("Heute")) {
@@ -211,12 +229,16 @@ export const getExerciseDeadlines = async (
 										console.warn(
 											chalk.yellow(
 												"Invalid date",
-												value.text(),
+												value
+													.text()!
+													.trim()
+													.split(",")[0],
 												date
 											)
 										);
+									} else {
+										deadline.endTime = date.toDate();
 									}
-									deadline.endTime = date.toDate();
 									return;
 								} catch (e) {
 									console.warn(chalk.yellow(e));
@@ -233,7 +255,6 @@ export const getExerciseDeadlines = async (
 						}
 					});
 				});
-				console.log(chalk.blue("Got deadline for", deadline.name));
 				deadlines.push(deadline);
 			});
 
