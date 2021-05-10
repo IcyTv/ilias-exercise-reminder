@@ -1,5 +1,8 @@
 name: Generate Executables for Tag
 on:
+    push:
+        tags:
+            - "v*"
     release:
         types:
             - created
